@@ -32,6 +32,36 @@ func TestTransfer(t *testing.T) {
 	fmt.Println("b", node2.token.Balances["b"])
 }
 
+func TestInvlidNode(t *testing.T) {
+	immutable := &ar.AR{
+		Txs: []schema.Tx{},
+	}
+	node1 := New("a", immutable)
+
+	fmt.Println("node1, init balances")
+	fmt.Println("a", node1.token.Balances["a"])
+	fmt.Println("b", node1.token.Balances["b"])
+	fmt.Println("a stake", node1.token.Stakes["a"])
+	fmt.Println("a stake", node1.token.Stakes["a"])
+
+	node1.Exec(schema.Tx{"staking", "a", "", 50, "a"}, false)
+	// b not stake
+	// node1.Exec(schema.Tx{"staking", "b", "", 50, "b"}, false)
+	fmt.Println("node1, stake")
+	fmt.Println("a", node1.token.Balances["a"])
+	fmt.Println("b", node1.token.Balances["b"])
+	fmt.Println("a stake", node1.token.Stakes["a"])
+	fmt.Println("b stake", node1.token.Stakes["b"])
+
+	node1.Exec(schema.Tx{"qryBalance", "b", "", 0, "b"}, false)
+	node1.Exec(schema.Tx{"qryBalance", "b", "", 0, "a"}, false)
+	fmt.Println("node1, qry balance")
+	fmt.Println("a", node1.token.Balances["a"])
+	fmt.Println("b", node1.token.Balances["b"])
+	fmt.Println("a stake", node1.token.Stakes["a"])
+	fmt.Println("b stake", node1.token.Stakes["b"])
+}
+
 func TestSlash(t *testing.T) {
 	immutable := &ar.AR{
 		Txs: []schema.Tx{},

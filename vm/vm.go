@@ -37,6 +37,9 @@ func (v *VM) Exec(tx schema.Tx, dryrun bool) {
 			}
 		}()
 	case "replyBalance":
+		if _, ok := v.token.Stakes[tx.Signer]; !ok {
+			return
+		}
 		if v.token.Balances[tx.From] == tx.Amount {
 			v.token.Mint(tx.Signer, 1.0)
 		} else {
