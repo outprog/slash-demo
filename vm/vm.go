@@ -1,6 +1,8 @@
 package vm
 
 import (
+	"fmt"
+
 	"github.com/outprog/slash-demo/ar"
 	"github.com/outprog/slash-demo/token"
 	"github.com/outprog/slash-demo/vm/schema"
@@ -44,6 +46,13 @@ func (v *VM) Exec(tx schema.Tx, dryrun bool) {
 			v.token.Mint(tx.Signer, 1.0)
 		} else {
 			v.token.Slash(tx.Signer, 1.0)
+			reply := schema.Tx{
+				Action: "slash",
+				From:   v.owner,
+				Data:   fmt.Sprintf("msg from %v is invalid", tx.Signer),
+				Signer: v.owner,
+			}
+			v.ar.Txs = append(v.ar.Txs, reply)
 		}
 	}
 	if !dryrun {
